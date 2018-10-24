@@ -2,7 +2,6 @@ FROM python:2-alpine
 MAINTAINER vasquez@meaningless.name
 
 ENV FGALLERY_VERSION LATEST
-
 ENV LANG C.UTF-8
 
 WORKDIR /opt
@@ -35,9 +34,7 @@ RUN curl -fsSL https://github.com/wavexx/facedetect/archive/master.zip -o facede
   chmod +x /usr/bin/facedetect && \
   rm facedetect.zip
 
-
 VOLUME ["/opt/fgallery/photos"]
 WORKDIR /opt/fgallery
-
 
 CMD ["/bin/bash"]
