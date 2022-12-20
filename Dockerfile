@@ -1,4 +1,4 @@
-FROM python:2-alpine
+FROM python:3.12-rc-alpine
 MAINTAINER vasquez@meaningless.name
 
 ENV FGALLERY_VERSION LATEST
@@ -23,16 +23,10 @@ RUN apk add --no-cache \
   pngcrush
 
 # fgallery
-RUN curl -fsSL http://www.thregr.org/~wavexx/software/fgallery/releases/fgallery-${FGALLERY_VERSION}.zip -o fgallery.zip && \
+RUN curl -fsSL https://www.thregr.org/~wavexx/software/fgallery/releases/fgallery-${FGALLERY_VERSION}.zip -o fgallery.zip && \
   unzip fgallery.zip && \
   mv fgallery-* fgallery && \
   rm fgallery.zip
-
-# facedetect
-RUN curl -fsSL https://github.com/wavexx/facedetect/archive/master.zip -o facedetect.zip && \
-  unzip -p facedetect.zip facedetect-master/facedetect > /usr/bin/facedetect && \
-  chmod +x /usr/bin/facedetect && \
-  rm facedetect.zip
 
 VOLUME ["/opt/fgallery/photos"]
 WORKDIR /opt/fgallery
