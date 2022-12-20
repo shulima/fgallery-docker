@@ -1,13 +1,13 @@
 FROM python:3.12-rc-alpine
-MAINTAINER vasquez@meaningless.name
+MAINTAINER m@meaningless.name
 
-ENV FGALLERY_VERSION LATEST
+ARG FGALLERY_VERSION=LATEST
+ARG FGALLERY_UID=1001
+ARG FGALLERY_GID=1001
 ENV LANG C.UTF-8
-
-WORKDIR /opt
+ENV PATH /opt/fgallery:$PATH
 
 RUN apk add --no-cache \
-  bash \
   ca-certificates \
   curl \
   exiftool \
@@ -22,13 +22,22 @@ RUN apk add --no-cache \
   p7zip \
   pngcrush
 
+RUN addgroup -g ${FGALLERY_GID} fgallery \
+  && adduser -D -H -u ${FGALLERY_UID} -G fgallery fgallery
+
+WORKDIR /opt
+
 # fgallery
-RUN curl -fsSL https://www.thregr.org/~wavexx/software/fgallery/releases/fgallery-${FGALLERY_VERSION}.zip -o fgallery.zip && \
-  unzip fgallery.zip && \
-  mv fgallery-* fgallery && \
-  rm fgallery.zip
+RUN curl -fsSL https://www.thregr.org/~wavexx/software/fgallery/releases/fgallery-${FGALLERY_VERSION}.zip -o fgallery.zip \
+  && unzip fgallery.zip \
+  && mv fgallery-* fgallery \
+  && chown -R fgallery:fgallery /opt/fgallery \
+  && rm fgallery.zip
 
-VOLUME ["/opt/fgallery/photos"]
 WORKDIR /opt/fgallery
+USER fgallery
 
-CMD ["/bin/bash"]
+VOLUME ["/photos"]
+VOLUME ["/output"]
+
+ENTRYPOINT ["/opt/fgallery/fgallery"]
